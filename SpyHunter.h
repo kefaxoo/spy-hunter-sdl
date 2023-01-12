@@ -150,10 +150,13 @@ void DrawRandomPower(CarInfo* cars, Game* game, SDL* sdl);
 void NewGame(Game* game, CarInfo* cars);
 
 
-void SaveGame(Game* game, CarInfo* cars, SDL* sdl);
+void SaveGame(Game* game, CarInfo* cars, SDL* sdl, char savedGames[10][20]);
 
+void LoadGame(Game* game, CarInfo* cars, SDL* sdl, char fileName[20]);
 
-void LoadGame(Game* game, CarInfo* cars, SDL* sdl);
+void ShowSavedGames(Game* game, CarInfo* cars, SDL* sdl, char savedGames[10][20]);
+
+void GetFileName(Game* game, CarInfo* cars, SDL* sdl, char savedGames[10][20]);
 
 
 void SpawnPlayer(Game* game, CarInfo* cars);

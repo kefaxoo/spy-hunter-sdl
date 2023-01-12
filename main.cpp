@@ -29,7 +29,9 @@ int main(int argc, char** argv) {
 	SDL sdl = { NULL };
 	Game game = { NULL };
 	CarInfo cars[5];
-	char savedGames[20][20];
+	char savedGames[10][20];
+	for (int i = 0; i < 10; i++)
+		savedGames[i][0] = '\0';
 	if (initGame(&sdl)) return 1;
 	// initialize the game
 	NewGame(&game, cars);
@@ -94,8 +96,11 @@ int main(int argc, char** argv) {
 				if (sdl.event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
 				else if (sdl.event.key.keysym.sym == SDLK_n) NewGame(&game, cars);
 				else if (sdl.event.key.keysym.sym == SDLK_p) game.pause = !game.pause;
-				else if (sdl.event.key.keysym.sym == SDLK_s) SaveGame(&game, cars, &sdl); // TODO:
-				else if (sdl.event.key.keysym.sym == SDLK_l) LoadGame(&game, cars, &sdl); // TODO: 
+				else if (sdl.event.key.keysym.sym == SDLK_s) SaveGame(&game, cars, &sdl, savedGames);
+				else if (sdl.event.key.keysym.sym == SDLK_l) {
+					ShowSavedGames(&game, cars, &sdl, savedGames);
+					timeStart = SDL_GetTicks();
+				}
 				else if (sdl.event.key.keysym.sym == SDLK_f) {
 					game.pause = !game.pause;
 					system("cls");

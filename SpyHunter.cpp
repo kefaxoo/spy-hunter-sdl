@@ -400,54 +400,128 @@ void NewGame( Game* game, CarInfo * cars) {
 };
 
 
-void SaveGame(Game* game, CarInfo* cars, SDL* sdl) {
+void SaveGame(Game* game, CarInfo* cars, SDL* sdl, char savedGames[10][20]) {
 	FILE* out;
 	time_t now = time(0);
 	tm* time = localtime(&now);
-	
+
 	// save game
-	char path[50] = "saves/";
-	strftime(path + 6, 50, "%d-%m-%Y_%H-%M-%S", time);
-	strcat(path, ".bin");
-	printf(path);
-	printf("\n");
+	char path[26] = "saves/";
+	strftime(path + 6, 26, "%d-%m-%Y_%H-%M-%S", time);
+	for (int i = 0; i < 10; i++) {
+		if (savedGames[i][0] == '\0') {
+			strftime(savedGames[i], 20, "%d-%m-%Y_%H-%M-%S", time);
+			break;
+		}
+	}
+
 	out = fopen(path, "wb");
 	fwrite(game, sizeof(Game), 1, out);
 	fclose(out);
-	
+
 	// save cars
-	char path2[50] = "saves/cars/";
-	strftime(path2 + 11, 50, "%d-%m-%Y_%H-%M-%S", time);
-	strcat(path2, ".bin");
-	printf(path2);
-	printf("\n");
-	out = fopen(path2, "wb");
-	fwrite(cars, sizeof(CarInfo), 5, out);
-	fclose(out);
+	char path2[31] = "saves/cars/";
+	strftime(path2 + 11, 31, "%d-%m-%Y_%H-%M-%S", time);
+	FILE *out2 = fopen(path2, "wb");
+	fwrite(cars, sizeof(CarInfo), 5, out2);
+	fclose(out2);
 }
 
-
-void LoadGame(Game* game, CarInfo* cars, SDL* sdl) {
-	/*FILE* in;
-	char path[50] = "saves/11-01-2023_01-32-37.bin";
+void LoadGame(Game* game, CarInfo* cars, SDL* sdl, char fileName[20]) {
+	
+	
+	FILE* in;
+	SDL_Surface* tempSpritePlayerPower = game->player.power.sprite;
+	SDL_Surface* tempSpritePower = game->power.sprite;
+	char path[26] = "saves/";
+	snprintf(path + 6, 26, "%s", fileName);
 	in = fopen(path, "rb");
 	fread(game, sizeof(Game), 1, in);
 	fclose(in);
 	game->player.sprite = sdl->playerCars[game->player.colorIndex];
 	game->player.power.sprite = tempSpritePlayerPower;
 	game->power.sprite = tempSpritePower;
-	
-	
+
+
 	CarInfo tempCars[5];
 	SDL_Surface* tempSurfaces[5];
-	char path2[50] = "saves/cars/11-01-2023_01-32-37.bin";
-	in = fopen(path2, "rb");
-	fread(tempCars, sizeof(CarInfo), 5, in);
-	fclose(in);
+	char path2[31] = "saves/cars/";
+	snprintf(path2 + 11, 31, "%s", fileName);
+	FILE* in2 = fopen(path2, "rb");
+	fread(tempCars, sizeof(CarInfo), 5, in2);
+	fclose(in2);
 	for (int i = 0; i < ENEMIES; i++) {
 		tempCars[i].car = sdl->cars[tempCars[i].colorIndex];
 		cars[i] = tempCars[i];
-	}*/
+	}
+}
+
+void ShowSavedGames(Game* game, CarInfo* cars, SDL* sdl, char savedGames[10][20]) {
+	char text[30];
+	int fileNameIndex = -1;
+	for (int i = 0; i < 10; i++) {
+		if (savedGames[i][0] == '\0') break;
+		sprintf(text, "%d. %s", i, savedGames[i]);
+		DrawString(sdl->screen, 40, SCREEN_HEIGHT / 4 + i * 15, text, sdl->charset);
+		RenderSurfaces(sdl);
+	}
+	do {
+		while (SDL_PollEvent(&sdl->event)) {
+			switch (sdl->event.type) {
+			case SDL_KEYUP:
+				if (sdl->event.key.keysym.sym == SDLK_0) fileNameIndex = 0;
+				else if (sdl->event.key.keysym.sym == SDLK_1) fileNameIndex = 1;
+				else if (sdl->event.key.keysym.sym == SDLK_2) fileNameIndex = 2;
+				else if (sdl->event.key.keysym.sym == SDLK_3) fileNameIndex = 3;
+				else if (sdl->event.key.keysym.sym == SDLK_4) fileNameIndex = 4;
+				else if (sdl->event.key.keysym.sym == SDLK_5) fileNameIndex = 5;
+				else if (sdl->event.key.keysym.sym == SDLK_6) fileNameIndex = 6;
+				else if (sdl->event.key.keysym.sym == SDLK_7) fileNameIndex = 7;
+				else if (sdl->event.key.keysym.sym == SDLK_8) fileNameIndex = 8;
+				else if (sdl->event.key.keysym.sym == SDLK_9) fileNameIndex = 9;
+				else if (sdl->event.key.keysym.sym == SDLK_BACKSPACE) fileNameIndex = -2;
+				break;
+			};
+		}
+		// warn
+		if (savedGames[0][0] == '\0') {
+			DrawString(sdl->screen, 5, SCREEN_HEIGHT / 4 - 15, "It's empty. Press backspace to exit.", sdl->charset);
+			RenderSurfaces(sdl);
+		}
+		else if (savedGames[fileNameIndex][0] == '\0') {
+			DrawString(sdl->screen, 40, SCREEN_HEIGHT / 4 - 15, "Incorrect number. Try again.", sdl->charset);
+			RenderSurfaces(sdl);
+			fileNameIndex = -1;
+		}
+	} while (fileNameIndex == -1);
+	if (fileNameIndex < 0) return;
+	//GetFileName(game, cars, sdl, savedGames);
+	LoadGame(game, cars, sdl, savedGames[fileNameIndex]);
+}
+
+
+void GetFileName(Game* game, CarInfo* cars, SDL* sdl, char savedGames[10][20]) {
+	int fileNameIndex = -1;
+	do {
+		while (SDL_PollEvent(&sdl->event)) {
+			switch (sdl->event.type) {
+			case SDL_KEYUP:
+				if (sdl->event.key.keysym.sym == SDLK_0) fileNameIndex = 0;
+				else if (sdl->event.key.keysym.sym == SDLK_1) fileNameIndex = 1;
+				else if (sdl->event.key.keysym.sym == SDLK_2) fileNameIndex = 2;
+				else if (sdl->event.key.keysym.sym == SDLK_3) fileNameIndex = 3;
+				else if (sdl->event.key.keysym.sym == SDLK_4) fileNameIndex = 4;
+				else if (sdl->event.key.keysym.sym == SDLK_5) fileNameIndex = 5;
+				else if (sdl->event.key.keysym.sym == SDLK_6) fileNameIndex = 6;
+				else if (sdl->event.key.keysym.sym == SDLK_7) fileNameIndex = 7;
+				else if (sdl->event.key.keysym.sym == SDLK_8) fileNameIndex = 8;
+				else if (sdl->event.key.keysym.sym == SDLK_9) fileNameIndex = 9;
+				break;
+			};
+		}
+	} while (fileNameIndex == -1);
+
+	LoadGame(game, cars, sdl, savedGames[fileNameIndex]);
 }
 
 
