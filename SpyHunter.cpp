@@ -29,7 +29,7 @@ int initGame(SDL* sdl) {
 		SDL_Quit();
 		printf("SDL_CreateWindowAndRenderer error: %s\n", SDL_GetError());
 		return 1;
-	};
+	}
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 	SDL_RenderSetLogicalSize(sdl->renderer, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -48,7 +48,7 @@ int initGame(SDL* sdl) {
 		SDL_DestroyRenderer(sdl->renderer);
 		SDL_Quit();
 		return 1;
-	};
+	}
 	SDL_SetColorKey(sdl->charset, true, 0x000000);
 	return 0;
 }
@@ -70,7 +70,7 @@ void DrawLine(SDL_Surface* screen, int x, int y, int l, int dx, int dy, Uint32 c
 		DrawPixel(screen, x, y, color);
 		x += dx;
 		y += dy;
-	};
+	}
 };
 
 
@@ -108,7 +108,7 @@ void DrawString(SDL_Surface* screen, int x, int y, const char* text,
 		SDL_BlitSurface(charset, &s, screen, &d);
 		x += 8;
 		text++;
-	};
+	}
 };
 
 
