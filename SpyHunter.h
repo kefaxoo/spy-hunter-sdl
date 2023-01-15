@@ -220,3 +220,5 @@ void RenderSurfaces(SDL* sdl);
 
 
 void FreeSurfaces(SDL sdl);
+
+void PauseGame(Game* game, CarInfo* cars, SDL* sdl);

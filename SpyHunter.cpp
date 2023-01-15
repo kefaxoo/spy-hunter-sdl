@@ -468,6 +468,20 @@ void LoadGame(Game* game, CarInfo* cars, SDL* sdl, char fileName[20]) {
 	}
 }
 
+void PauseGame(Game* game, CarInfo* cars, SDL* sdl) {
+	while (true) {
+		while (SDL_PollEvent(&sdl->event)) {
+			switch (sdl->event.type) {
+			case SDL_KEYDOWN:
+				if (sdl->event.key.keysym.sym == SDLK_p) {
+					game->pause = !game->pause;
+					return;
+				}
+			}
+		}
+	}
+}
+
 void ShowSavedGames(Game* game, CarInfo* cars, SDL* sdl, char savedGames[10][20]) {
 	char text[30];
 	int fileNameIndex = -1;
@@ -507,7 +521,6 @@ void ShowSavedGames(Game* game, CarInfo* cars, SDL* sdl, char savedGames[10][20]
 		}
 	} while (fileNameIndex == -1);
 	if (fileNameIndex < 0) return;
-	//GetFileName(game, cars, sdl, savedGames);
 	LoadGame(game, cars, sdl, savedGames[fileNameIndex]);
 }
 

@@ -94,8 +94,13 @@ int main(int argc, char** argv) {
 			switch (sdl.event.type) {
 			case SDL_KEYDOWN:
 				if (sdl.event.key.keysym.sym == SDLK_ESCAPE) quit = 1;
-				else if (sdl.event.key.keysym.sym == SDLK_n) NewGame(&game, cars);
-				else if (sdl.event.key.keysym.sym == SDLK_p) game.pause = !game.pause;
+				else if (sdl.event.key.keysym.sym == SDLK_n)
+					NewGame(&game, cars);
+				else if (sdl.event.key.keysym.sym == SDLK_p) {
+					game.pause = !game.pause;
+					PauseGame(&game, cars, &sdl);
+					timeStart = SDL_GetTicks();
+				}
 				else if (sdl.event.key.keysym.sym == SDLK_s) SaveGame(&game, cars, &sdl, savedGames);
 				else if (sdl.event.key.keysym.sym == SDLK_l) {
 					ShowSavedGames(&game, cars, &sdl, savedGames);
@@ -115,7 +120,7 @@ int main(int argc, char** argv) {
 				else if (sdl.event.key.keysym.sym == SDLK_DOWN) game.player.speed = 1;
 				else if (sdl.event.key.keysym.sym == SDLK_LEFT) game.player.turn = -1;
 				else if (sdl.event.key.keysym.sym == SDLK_RIGHT) game.player.turn = 1;
-				else if (sdl.event.key.keysym.sym == SDLK_SPACE) addBullet(&game);
+				else if (sdl.event.key.keysym.sym == SDLK_SPACE) if (!game.pause) addBullet(&game);
 				break;
 			case SDL_KEYUP:
 				if (sdl.event.key.keysym.sym == SDLK_UP) game.player.speed = 0;
