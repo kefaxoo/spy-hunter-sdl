@@ -192,20 +192,32 @@ void DrawHeader(SDL_Surface* screen, Game game, SDL sdl, double fps) {
 		DrawString(sdl.screen, sdl.screen->w - strlen(text) * 8, SCREEN_HEIGHT / 2 - 60, text, sdl.charset);
 	}
 
-	sprintf(text, "N - nowa gra");
+	sprintf(text, "\032\033 - moving the car in given direction");
+	DrawString(sdl.screen, sdl.screen->w - strlen(text) * 9, 8 * SCREEN_HEIGHT / 10 + 30, text, sdl.charset);
+
+	sprintf(text, "\030/\031 - przyspieszenie/zwolnienie");
 	DrawString(sdl.screen, sdl.screen->w - strlen(text) * 9, 8 * SCREEN_HEIGHT / 10, text, sdl.charset);
 
 	sprintf(text, "Esc - wyjscie");
 	DrawString(sdl.screen, sdl.screen->w - strlen(text) * 9, 8 * SCREEN_HEIGHT / 10 - 30, text, sdl.charset);
-	
-	sprintf(text, "\030/\031 - przyspieszenie/zwolnienie");
+
+	sprintf(text, "N - nowa gra");
 	DrawString(sdl.screen, sdl.screen->w - strlen(text) * 9, 8 * SCREEN_HEIGHT / 10 - 60, text, sdl.charset);
 
-	sprintf(text, "p - pause");
+	sprintf(text, "S - save game");
 	DrawString(sdl.screen, sdl.screen->w - strlen(text) * 9, 8 * SCREEN_HEIGHT / 10 - 90, text, sdl.charset);
 
-	sprintf(text, "f - finish game");
+	sprintf(text, "L - load game");
 	DrawString(sdl.screen, sdl.screen->w - strlen(text) * 9, 8 * SCREEN_HEIGHT / 10 - 120, text, sdl.charset);
+
+	sprintf(text, "P - pause game");
+	DrawString(sdl.screen, sdl.screen->w - strlen(text) * 9, 8 * SCREEN_HEIGHT / 10 - 150, text, sdl.charset);
+
+	sprintf(text, "Space - shooting");
+	DrawString(sdl.screen, sdl.screen->w - strlen(text) * 9, 8 * SCREEN_HEIGHT / 10 - 180, text, sdl.charset);
+
+	sprintf(text, "F - finish the game");
+	DrawString(sdl.screen, sdl.screen->w - strlen(text) * 9, 8 * SCREEN_HEIGHT / 10 - 210, text, sdl.charset);
 };
 
 
