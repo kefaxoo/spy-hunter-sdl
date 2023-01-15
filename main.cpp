@@ -107,13 +107,7 @@ int main(int argc, char** argv) {
 					timeStart = SDL_GetTicks();
 				}
 				else if (sdl.event.key.keysym.sym == SDLK_f) {
-					game.pause = !game.pause;
-					system("cls");
-					printf("Finish game\n");
-					printf("Total time: ");
-					printf("%f", game.time.total);
-					printf("\nScore: ");
-					printf("%f", game.score);
+					FinishGame(&game, &sdl);
 					quit = 1;
 				}
 				else if (sdl.event.key.keysym.sym == SDLK_UP) game.player.speed = -1;

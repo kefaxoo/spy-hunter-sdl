@@ -15,7 +15,6 @@
 #define CAR_SPEED		250
 #define DATE_FORMAT		"%x-%I:%M%p"
 
-
 struct Game {
 	struct {
 		SDL_Surface* sprite;
@@ -222,3 +221,5 @@ void RenderSurfaces(SDL* sdl);
 void FreeSurfaces(SDL sdl);
 
 void PauseGame(Game* game, CarInfo* cars, SDL* sdl);
+
+void FinishGame(Game* game, SDL* sdl);

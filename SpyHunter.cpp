@@ -482,6 +482,33 @@ void PauseGame(Game* game, CarInfo* cars, SDL* sdl) {
 	}
 }
 
+void FinishGame(Game* game, SDL* sdl) {
+	int czerwony = SDL_MapRGB(sdl->screen->format, 0xFF, 0xFF, 0xFF);
+	int niebieski = SDL_MapRGB(sdl->screen->format, 0x11, 0x11, 0xCC);
+	DrawRectangle(sdl->screen, SCREEN_WIDTH / 3, SCREEN_HEIGHT / 3, SCREEN_WIDTH / 3, 110, czerwony, niebieski);
+	char text[30];
+	sprintf(text, "Finish game");
+	DrawString(sdl->screen, SCREEN_WIDTH / 3 + 20, SCREEN_HEIGHT / 3 + 20, text, sdl->charset);
+	sprintf(text, "%s: %f", "Total time", game->time.total);
+	DrawString(sdl->screen, SCREEN_WIDTH / 3 + 20, SCREEN_HEIGHT / 3 + 40, text, sdl->charset);
+	sprintf(text, "%s: %f", "Score: ", game->score);
+	DrawString(sdl->screen, SCREEN_WIDTH / 3 + 20, SCREEN_HEIGHT / 3 + 60, text, sdl->charset);
+	sprintf(text, "Press esc to close game");
+	DrawString(sdl->screen, SCREEN_WIDTH / 3 + 20, SCREEN_HEIGHT / 3 + 80, text, sdl->charset);
+	RenderSurfaces(sdl);
+	while (true) {
+		while (SDL_PollEvent(&sdl->event)) {
+			switch (sdl->event.type) {
+			case SDL_KEYDOWN:
+				if (sdl->event.key.keysym.sym == SDLK_ESCAPE) {
+					game->pause = !game->pause;
+					return;
+				}
+			}
+		}
+	}
+}
+
 void ShowSavedGames(Game* game, CarInfo* cars, SDL* sdl, char savedGames[10][20]) {
 	char text[30];
 	int fileNameIndex = -1;
