@@ -69,6 +69,7 @@ struct Game {
 	double totalDistance;
 	double score;
 	bool pause;
+	int coeff = 2;
 };
 
 
@@ -166,7 +167,7 @@ bool inArray(int x, int y);
 
 
 // Check ifhorizontal position is out of screen and do it in the range.
-void fixCoordX(int* horizontal);
+void fixCoordX(int* horizontal, Game *game);
 
 
 // Check if vertical position is out of screen and do it in the range.
@@ -223,3 +224,5 @@ void FreeSurfaces(SDL sdl);
 void PauseGame(Game* game, CarInfo* cars, SDL* sdl);
 
 void FinishGame(Game* game, SDL* sdl);
+
+void changeCoeff(bool isDecrement, Game *game);

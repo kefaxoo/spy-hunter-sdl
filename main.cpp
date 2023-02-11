@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
 			game.player.coord.y += (game.player.speed > 0 ? 400 : 100) * game.time.delta * game.player.speed;
 			fixCoordY(&game.player.coord.y);
 			game.player.coord.x += game.player.turn * game.time.delta * 300;
-			fixCoordX(&game.player.coord.x);
+			fixCoordX(&game.player.coord.x, &game);
 		}
 			DrawBullet(cars, &game, &sdl);
 			DrawRandomPower(cars, &game, &sdl);
@@ -92,7 +92,11 @@ int main(int argc, char** argv) {
 				else if (sdl.event.key.keysym.sym == SDLK_DOWN) game.player.speed = 1;
 				else if (sdl.event.key.keysym.sym == SDLK_LEFT) game.player.turn = -1;
 				else if (sdl.event.key.keysym.sym == SDLK_RIGHT) game.player.turn = 1;
-				else if (sdl.event.key.keysym.sym == SDLK_SPACE) if (!game.pause) addBullet(&game);
+				else if (sdl.event.key.keysym.sym == SDLK_SPACE) {
+					if (!game.pause) addBullet(&game);
+				}
+				else if (sdl.event.key.keysym.sym == SDLK_RIGHTBRACKET) changeCoeff(true, &game);
+				else if (sdl.event.key.keysym.sym == SDLK_LEFTBRACKET) changeCoeff(false, &game);
 				break;
 			case SDL_KEYUP:
 				if (sdl.event.key.keysym.sym == SDLK_UP) game.player.speed = 0;

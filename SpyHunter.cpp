@@ -123,13 +123,16 @@ void DrawSurface(SDL_Surface* screen, SDL_Surface* sprite, int x, int y) {
 	SDL_BlitSurface(sprite, NULL, screen, &dest);
 };
 
-
+// рисует дорогу
 void DrawDest(Game* game, SDL* sdl, int* roadMarkingPos) {
 	int grey = SDL_MapRGB(sdl->screen->format, 105, 105, 105);
-	DrawRectangle(sdl->screen, SCREEN_WIDTH / 3, 0, SCREEN_WIDTH / 3, SCREEN_HEIGHT, grey, grey);
+	// рисует асфальт (первый screen_width - левый край (+), второй - правый (-))
+	DrawRectangle(sdl->screen, SCREEN_WIDTH / (3 + game->coeff), 0, (SCREEN_WIDTH / 2 - SCREEN_WIDTH / (3 + game->coeff)) * 2, SCREEN_HEIGHT, grey, grey);
 	int grey_dark = SDL_MapRGB(sdl->screen->format, 40, 40, 40);
-	DrawRectangle(sdl->screen, SCREEN_WIDTH / 3 - SCREEN_WIDTH / 30, 0, SCREEN_WIDTH / 30, SCREEN_HEIGHT, grey_dark, grey_dark);
-	DrawRectangle(sdl->screen, SCREEN_WIDTH * 2 / 3, 0, SCREEN_WIDTH / 30, SCREEN_HEIGHT, grey_dark, grey_dark);
+	// рисует левую обочину (+)
+	DrawRectangle(sdl->screen, SCREEN_WIDTH / (3 + game->coeff) - SCREEN_WIDTH / 30, 0, SCREEN_WIDTH / 30, SCREEN_HEIGHT, grey_dark, grey_dark);
+	// рисует правую обочину (+)
+	DrawRectangle(sdl->screen, SCREEN_WIDTH * (2 + game->coeff) / (3 + game->coeff), 0, SCREEN_WIDTH / 30, SCREEN_HEIGHT, grey_dark, grey_dark);
 	if (game->player.speed != 0) {
 		*roadMarkingPos += (game->player.speed > 0 ? 4 * game->player.speed : (-7 * game->player.speed)) * game->time.delta * 100;
 	}
@@ -148,7 +151,7 @@ void DrawDest(Game* game, SDL* sdl, int* roadMarkingPos) {
 	//free(tmpPos);
 };
 
-
+// рисует разметку
 void DrawRoadRectangle(SDL_Surface* screen, int y) {
 	int grey_light = SDL_MapRGB(screen->format, 192, 192, 192);
 	DrawRectangle(screen, SCREEN_WIDTH / 2, y, SCREEN_WIDTH / 50, SCREEN_HEIGHT / 7, grey_light, grey_light);
@@ -218,6 +221,12 @@ void DrawHeader(SDL_Surface* screen, Game game, SDL sdl, double fps) {
 
 	sprintf(text, "F - finish the game");
 	DrawString(sdl.screen, sdl.screen->w - strlen(text) * 9, 8 * SCREEN_HEIGHT / 10 - 210, text, sdl.charset);
+
+	sprintf(text, "[ - reduce road size");
+	DrawString(sdl.screen, sdl.screen->w - strlen(text) * 9, 8 * SCREEN_HEIGHT / 10 - 270, text, sdl.charset);
+
+	sprintf(text, "] - increase road size");
+	DrawString(sdl.screen, sdl.screen->w - strlen(text) * 9, 8 * SCREEN_HEIGHT / 10 - 300, text, sdl.charset);
 };
 
 
@@ -597,14 +606,15 @@ bool inArray(int x, int y) {
 	return false;
 }
 
-
 // Check ifhorizontal position is out of screen and do it in the range.
-void fixCoordX(int* horizontal) {
-	if (*horizontal < SCREEN_WIDTH / 2 - SCREEN_WIDTH / 6) {
-		*horizontal = SCREEN_WIDTH / 2 - SCREEN_WIDTH / 6;
-	}
-	else if (*horizontal > SCREEN_WIDTH / 2 + SCREEN_WIDTH / 6) {
-		*horizontal = SCREEN_WIDTH / 2 + SCREEN_WIDTH / 6;
+void fixCoordX(int* horizontal, Game* game) {
+	// граница выхода машины по левому краю
+	if (*horizontal < SCREEN_WIDTH / (3 + game->coeff) - SCREEN_WIDTH / 30 + 30)
+	{
+		*horizontal = SCREEN_WIDTH / (3 + game->coeff) - SCREEN_WIDTH / 30 + 30;
+	} else if (*horizontal > SCREEN_WIDTH * (2 + game->coeff) / (3 + game->coeff) + SCREEN_WIDTH / 30 - 30)
+	{
+		*horizontal = SCREEN_WIDTH* (2 + game->coeff) / (3 + game->coeff) + SCREEN_WIDTH / 30 - 30;
 	}
 }
 
@@ -861,4 +871,14 @@ void FreeSurfaces(SDL sdl) {
 	SDL_DestroyRenderer(sdl.renderer);
 	SDL_DestroyWindow(sdl.window);
 	SDL_Quit();
+}
+
+void changeCoeff(bool isDecrement, Game *game)
+{
+	if (isDecrement && game->coeff + 1 < 3) {
+		game->coeff++;
+	} else if (!isDecrement && game->coeff - 1 > -1)
+	{
+		game->coeff--;
+	}
 }
